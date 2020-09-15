@@ -1,0 +1,42 @@
+@import url(./__img/profile__img.css);
+@import url(./__img-hover/profile__img-hover.css);
+@import url(./__info/profile__info.css);
+@import url(./__name/profile__name.css);
+@import url(./__edit-btn/profile__edit-btn.css);
+@import url(./__about/profile__about.css);
+@import url(./__add-btn/profile__add-btn.css);
+
+
+.profile {
+    margin: 40px auto 0;
+    width: 882px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    position: relative;
+}
+
+@media screen and (max-width: 900px) {
+    .profile {
+        max-width: 90vw;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+}
+
+@media screen and (max-width: 425px) {
+    .profile {
+        max-width: 282px;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+    }
+}

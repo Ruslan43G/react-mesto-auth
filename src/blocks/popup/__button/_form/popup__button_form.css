@@ -1,0 +1,14 @@
+.popup__button_form {
+    margin-bottom: 36px;
+    margin-left: 36px;
+}
+
+@media screen and (max-width: 500px) {
+    .popup__button_form {
+        max-width: 64vw;
+        min-height: 40px;
+        margin-left: 20px;
+        margin-top: 5px;
+    
+    }
+}

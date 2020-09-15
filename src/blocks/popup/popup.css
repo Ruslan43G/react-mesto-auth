@@ -1,0 +1,39 @@
+@import url(./__container/popup__container.css);
+@import url(./__image-container/popup__image-container.css);
+@import url(./_delete/popup_delete.css);
+@import url(./_avatar/popup_avatar.css);
+@import url(./__image/popup__image.css);
+@import url(./__img-text/popup__img-text.css);
+@import url(./__icon-close/popup__icon-close.css);
+@import url(./__icon-close/_image/popup__icon-close_image.css);
+@import url(./__title/popup__title.css);
+@import url(./__title/_form/popup__title_form.css);
+@import url(./__title/_delete/popup__title_delete.css);
+@import url(./__input/popup__input.css);
+@import url(./__input/_type/popup__input_type_error.css);
+@import url(./__button/popup__button.css);
+@import url(./__button/_delete/popup__button_delete.css);
+@import url(./__button/_form/popup__button_form.css);
+@import url(./__error/popup__error.css);
+@import url(./__error/_visible/popup__error_visible.css);
+.popup {
+   background-color: rgba(0, 0, 0, 0.5);
+   height: 100%;
+   width: 100%;
+   position: fixed;
+   top: 0;
+   left: 0;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   visibility: hidden;
+   opacity: 0;
+   transition: visibility 0s, opacity 0.5s linear;
+   transition: visibility 0s, opacity 0.5s linear;
+   transition: 0.5s linear;
+   transition: 0.5s linear;
+}
+
+.popup:hover{
+   cursor: pointer;
+}

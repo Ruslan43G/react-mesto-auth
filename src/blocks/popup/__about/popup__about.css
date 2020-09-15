@@ -1,0 +1,17 @@
+.popup__about {
+    width: 358px;
+    height: 27.26px;
+    border: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    margin-left: 36px;
+    margin-top: 30px;
+    outline: none;
+}
+
+@media screen and (max-width: 500px) {
+    .popup__about {
+        max-width: 50vw;
+        font-size: 12px;
+        line-height: 15px;
+    }
+}
