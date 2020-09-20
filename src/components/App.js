@@ -1,4 +1,5 @@
 import React from 'react';
+import { Route, Switch, Redirect, useHistory } from 'react-router-dom';
 import Header from './Header.js';
 import Main from './Main.js';
 import Footer from './Footer.js';
@@ -9,6 +10,11 @@ import EditProfilePopup from './EditProfilePopup.js';
 import ImagePopup from './ImagePopup.js';
 import EditAvatarPopup from './EditAvatarPopup.js';
 import AddPlacePopup from './AddPlacePopup.js';
+import Login from './Login';
+import Register from './Register';
+import InfoTooltip from './InfoTooltip';
+import ProtectedRoute from './ProtectedRoute';
+import auth from '../utils/Auth';
 
 function App() {
   // [переменные состояния]
@@ -21,19 +27,35 @@ function App() {
     link: '',
     name: ''
   });
+  const [deleteIsOpen, setDeleteIsOpen] = React.useState(false);
+  const [tooltip, setTooltip] = React.useState({
+    isOpen: false,
+    title: '',
+    success: true
+  }); // попап с сообщением о регистрации
   const [cards, setCards] = React.useState([]); //массив картчоек
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false); //стейт индикатора загрузки
+  const [loggedIn, setLoggedIn] = React.useState(false); // стейт авторизации
+  const [email, setEmail] = React.useState('');
+  const [headerLink, setHeaderLink] = React.useState({title: '', link: true});
+
+  const history = useHistory();
 
   //эффект при монтировании
   React.useEffect(() => {
-    Promise.all([api.getUserInfo(), api.getInitialCards()])
-      .then(([userInfo, initialCards]) => {
+
+    Promise.all([api.getUserInfo(), api.getInitialCards(), auth.checkToken()])
+      .then(([userInfo, initialCards, token]) => {
         setCurrentUser({name: userInfo.name, about: userInfo.about, avatar: userInfo.avatar, _id: userInfo._id});
         setCards([...initialCards]);
+        token.data ? setLoggedIn(true) : setLoggedIn(false);
+        setEmail(token.data.email);
+        history.push('/');
       })
-      .catch(err => console.log(err))
-  }, [])
-  const [deleteIsOpen, setDeleteIsOpen] = React.useState(false);
+      .catch(err => console.log(err));
+
+  }, [loggedIn])
+
   // функция закрытия всех попапов. Переводит переменные состояния в необходимые значения
   function closeAllPopups() {
     setProfileIsOpen(false);
@@ -45,7 +67,12 @@ function App() {
       isOpen: true,
     });
     setIsLoading(false);
+    setTooltip({
+      ...tooltip,
+      isOpen: false
+    });
   }
+
  // Хэндлеры для открытия попапов
   function handleEditAvatarClick () {
     setAvatarIsOpen(true);
@@ -115,26 +142,46 @@ function App() {
       })
       .catch(err => console.log(err))
   }
+
+  function handleLogout () {
+    localStorage.removeItem('jwt');
+    setLoggedIn(false);
+    history.push('/signin');
+  }
   // рендер основной страницы
   return (
     <div className="page">
       <CurrentUserContext.Provider value={currentUser}>
-        <Header />
-        <Main
-        cards={cards}
-        onCardLike={handleCardLike}
-        onCardDelete={handleCardDelete} 
-        onEditAvatar={handleEditAvatarClick} 
-        onEditProfile={handleEditProfileClick} 
-        onAddPlace={handleAddPlaceClick}
-        onCardClick={handleCardClick}
-        />
+        <Header email={email} loggedIn={loggedIn} setLink={headerLink} onClick={handleLogout}/>
+        <Switch>
+          <ProtectedRoute exact path='/' 
+            loggedIn={loggedIn}
+            component={Main} 
+            cards={cards}
+            onCardLike={handleCardLike}
+            onCardDelete={handleCardDelete} 
+            onEditAvatar={handleEditAvatarClick} 
+            onEditProfile={handleEditProfileClick} 
+            onAddPlace={handleAddPlaceClick}
+            onCardClick={handleCardClick} 
+          />
+          <Route path='/signin'>
+            <Login setloggedIn={setLoggedIn} setLink={setHeaderLink}/>
+          </Route>
+          <Route path='/signup'>
+            <Register infoTool={setTooltip} setLink={setHeaderLink}/>
+          </Route>
+          <Route>
+            <Redirect to={`/${loggedIn ? '' : 'signin'}`} />
+          </Route>
+        </Switch>
         <Footer />
         <EditProfilePopup isOpen={profileIsOpen} onClose={closeAllPopups} onSubmit={handleUpdateUser} isLoading={isLoading}/>
         <AddPlacePopup isOpen={addCardIsOpen} onClose={closeAllPopups} onSubmit={handleCardSubmit} isLoading={isLoading}/>
         <EditAvatarPopup isOpen={avatarIsOpen} onClose={closeAllPopups} onSubmit={handleUpdateAvatar} isLoading={isLoading}/>
         <ImagePopup card={selectedCard} onClose={closeAllPopups}/>
         <PopupWithForm name='popup_delete' buttonText='Да' title='Вы уверены?' isOpen={deleteIsOpen} onClose={closeAllPopups} isLoading={isLoading}/>
+        <InfoTooltip options={tooltip} onClose={closeAllPopups}/>
       </CurrentUserContext.Provider>
       </div> 
   );

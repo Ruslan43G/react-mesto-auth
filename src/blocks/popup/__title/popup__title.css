@@ -1,3 +1,5 @@
+@import url(./_info/popup__title_info.css);
+
 .popup__title {
     font-style: normal;
     font-weight: 900;

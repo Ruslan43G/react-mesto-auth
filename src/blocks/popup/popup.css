@@ -1,4 +1,5 @@
 @import url(./__container/popup__container.css);
+@import url(./__container/_info/popup__container_info.css);
 @import url(./__image-container/popup__image-container.css);
 @import url(./_delete/popup_delete.css);
 @import url(./_avatar/popup_avatar.css);
@@ -16,6 +17,7 @@
 @import url(./__button/_form/popup__button_form.css);
 @import url(./__error/popup__error.css);
 @import url(./__error/_visible/popup__error_visible.css);
+@import url(./__info/popup__info.css);
 .popup {
    background-color: rgba(0, 0, 0, 0.5);
    height: 100%;
