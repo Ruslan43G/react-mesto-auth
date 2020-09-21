@@ -41,19 +41,28 @@ function App() {
 
   const history = useHistory();
 
-  //эффект при монтировании
+  // Запрос данных о юзере и карточках при монтировании, выполняется 1 раз
   React.useEffect(() => {
 
-    Promise.all([api.getUserInfo(), api.getInitialCards(), auth.checkToken()])
+    Promise.all([api.getUserInfo(), api.getInitialCards()])
       .then(([userInfo, initialCards, token]) => {
         setCurrentUser({name: userInfo.name, about: userInfo.about, avatar: userInfo.avatar, _id: userInfo._id});
         setCards([...initialCards]);
-        token.data ? setLoggedIn(true) : setLoggedIn(false);
-        setEmail(token.data.email);
-        history.push('/');
+        
       })
       .catch(err => console.log(err));
 
+  }, []);
+
+  // Проверка токена и его валидности
+  React.useEffect(() => {
+    auth.checkToken()
+      .then((res) => {
+        res.data ? setLoggedIn(true) : setLoggedIn(false);
+        setEmail(res.data.email);
+        history.push('/');
+      })
+      .catch(err => console.log(err));
   }, [loggedIn])
 
   // функция закрытия всех попапов. Переводит переменные состояния в необходимые значения
@@ -143,11 +152,51 @@ function App() {
       .catch(err => console.log(err))
   }
 
+  //обработчик сабмита входа пользователя
+  function handleLogin (data) {
+    auth.login({
+        password: data.password,
+        email: data.email
+    })
+    .then((res) => {
+        localStorage.setItem('jwt', res.token);
+        setLoggedIn(true);
+        history.push('/')
+    })
+    .catch((err) => console.log(err))
+}
+  // обработчика сабмита выхода пользователя
   function handleLogout () {
     localStorage.removeItem('jwt');
     setLoggedIn(false);
     history.push('/signin');
   }
+
+  // обработчик сабмита регистрации
+  function handleRegister (data) {
+    auth.register({
+      password: data.password,
+      email: data.email
+    })
+    .then((res) => {
+        console.log(res);
+        setTooltip({
+            isOpen: true,
+            title: 'Вы успешно зарегистрировались!',
+            success: true
+        });
+        history.push('/');
+    })
+    .catch((err) => {
+        console.log(err);
+        setTooltip({
+            isOpen: true,
+            title: 'Что-то пошло не так! Попробуйте ещё раз.',
+            success: false
+        });
+    })
+}
+
   // рендер основной страницы
   return (
     <div className="page">
@@ -166,10 +215,10 @@ function App() {
             onCardClick={handleCardClick} 
           />
           <Route path='/signin'>
-            <Login setloggedIn={setLoggedIn} setLink={setHeaderLink}/>
+            <Login onSubmit={handleLogin} setLink={setHeaderLink}/>
           </Route>
           <Route path='/signup'>
-            <Register infoTool={setTooltip} setLink={setHeaderLink}/>
+            <Register onSubmit={handleRegister} setLink={setHeaderLink}/>
           </Route>
           <Route>
             <Redirect to={`/${loggedIn ? '' : 'signin'}`} />

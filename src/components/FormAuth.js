@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-export default function Form (props)  {
+export default function FormAuth (props)  {
     function handleEmailInput (evt) {
         props.setEmail(evt.target.value);
     }
