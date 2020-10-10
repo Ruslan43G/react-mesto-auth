@@ -10,6 +10,7 @@ import EditProfilePopup from './EditProfilePopup.js';
 import ImagePopup from './ImagePopup.js';
 import EditAvatarPopup from './EditAvatarPopup.js';
 import AddPlacePopup from './AddPlacePopup.js';
+import ConfirmDeletePopup from "./ConfirmDeletePopup";
 import Login from './Login';
 import Register from './Register';
 import InfoTooltip from './InfoTooltip';
@@ -19,6 +20,7 @@ import auth from '../utils/Auth';
 function App() {
   // [переменные состояния]
   const [currentUser, setCurrentUser] = React.useState({name: '', about: '', avatar: '', _id: ''}); // переменная состояния пользователя
+    const [deleteCard, setDeleteCard] = React.useState({});
   const [profileIsOpen, setProfileIsOpen] = React.useState(false); // попап профиля
   const [avatarIsOpen, setAvatarIsOpen] = React.useState(false); // попап авата
   const [addCardIsOpen, setAddCardIsOpen] = React.useState(false); // попап добавления карточки
@@ -48,7 +50,7 @@ function App() {
       .then(([userInfo, initialCards, token]) => {
         setCurrentUser({name: userInfo.name, about: userInfo.about, avatar: userInfo.avatar, _id: userInfo._id});
         setCards([...initialCards]);
-        
+
       })
       .catch(err => console.log(err));
 
@@ -103,16 +105,17 @@ function App() {
     });
   }
 
+  // обновить профиль юзера
   function handleUpdateUser(data) {
     setIsLoading(true);
     api.setUserInfo(data)
       .then((res) => {
         setCurrentUser({...currentUser, name: res.name, about: res.about});
-        closeAllPopups();  
+        closeAllPopups();
       })
       .catch(err => console.log(err));
   }
-
+  // Обновить аватар юзера
   function handleUpdateAvatar(data) {
     setIsLoading(true);
     api.setUserAvatar(data)
@@ -130,16 +133,24 @@ function App() {
             const newCards = cards.map(item => item._id === card._id ? newCard : item);
             setCards(newCards);
         })
-        .catch(err => console.log(err));    
+        .catch(err => console.log(err));
 }
-  //функция уалить карточку
+  // функция открыть попап удаления
   function handleCardDelete (card) {
-      api.deleteCard(card._id)
+      setDeleteIsOpen(true);
+      setDeleteCard({...card});
+  }
+  // сабмит удаления карточки
+  function deleteCardSubmit () {
+      setIsLoading(true)
+      api.deleteCard(deleteCard._id)
           .then(() => {
-              const newCards = cards.filter(item => item._id !== card._id);
+              closeAllPopups();
+              const newCards = cards.filter(item => item._id !== deleteCard._id);
               setCards(newCards);
           })
           .catch(err => console.log(err))
+          .finally(() => setIsLoading(false))
   }
   //обработчик сабмит добавления карточки
   function handleCardSubmit(data) {
@@ -203,16 +214,16 @@ function App() {
       <CurrentUserContext.Provider value={currentUser}>
         <Header email={email} loggedIn={loggedIn} setLink={headerLink} onClick={handleLogout}/>
         <Switch>
-          <ProtectedRoute exact path='/' 
+          <ProtectedRoute exact path='/'
             loggedIn={loggedIn}
-            component={Main} 
+            component={Main}
             cards={cards}
             onCardLike={handleCardLike}
-            onCardDelete={handleCardDelete} 
-            onEditAvatar={handleEditAvatarClick} 
-            onEditProfile={handleEditProfileClick} 
+            onCardDelete={handleCardDelete}
+            onEditAvatar={handleEditAvatarClick}
+            onEditProfile={handleEditProfileClick}
             onAddPlace={handleAddPlaceClick}
-            onCardClick={handleCardClick} 
+            onCardClick={handleCardClick}
           />
           <Route path='/signin'>
             <Login onSubmit={handleLogin} setLink={setHeaderLink}/>
@@ -229,10 +240,10 @@ function App() {
         <AddPlacePopup isOpen={addCardIsOpen} onClose={closeAllPopups} onSubmit={handleCardSubmit} isLoading={isLoading}/>
         <EditAvatarPopup isOpen={avatarIsOpen} onClose={closeAllPopups} onSubmit={handleUpdateAvatar} isLoading={isLoading}/>
         <ImagePopup card={selectedCard} onClose={closeAllPopups}/>
-        <PopupWithForm name='popup_delete' buttonText='Да' title='Вы уверены?' isOpen={deleteIsOpen} onClose={closeAllPopups} isLoading={isLoading}/>
+        <ConfirmDeletePopup isOpen={deleteIsOpen} onClose={closeAllPopups} isLoading={isLoading} onSubmit={deleteCardSubmit}/>
         <InfoTooltip options={tooltip} onClose={closeAllPopups}/>
       </CurrentUserContext.Provider>
-      </div> 
+      </div>
   );
 }
 
