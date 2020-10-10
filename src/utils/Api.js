@@ -12,7 +12,7 @@ class Api {
             body: JSON.stringify({
                 name: formData.name,
                 link: formData.link
-            })    
+            })
             }
         )
         .then((res) => {
@@ -32,7 +32,7 @@ class Api {
                 return res.json();
             }
             return Promise.reject(`${res.status} ${res.statusText}`);
-        });  
+        });
     }
 
     getUserInfo() {
@@ -44,7 +44,7 @@ class Api {
                     return res.json();
                 }
                 return Promise.reject(`Ошибка: ${res.status} ${res.statusText}`);
-            });   
+            });
 
     }
 
@@ -55,7 +55,7 @@ class Api {
             body: JSON.stringify({
                 name: newUserData.name,
                 about: newUserData.about
-            })    
+            })
             }
         )
         .then((res) => {
@@ -72,7 +72,7 @@ class Api {
             headers: this._headers,
             body: JSON.stringify({
                 avatar: newUserData.avatar
-            })    
+            })
             }
         )
         .then((res) => {
@@ -122,14 +122,16 @@ class Api {
         });
     }
 
-    
+
 
 }
 
+const jwt = localStorage.getItem('jwt');
+
 const api = new Api({
-    baseUrl: 'https://mesto.nomoreparties.co/v1/cohort-12',
+    baseUrl: 'https://api.ruslan43g.students.nomoreparties.xyz',
     headers: {
-      authorization: '627f7bad-0dfb-4267-9517-9e8391316bf9',
+      authorization: `Bearer ${jwt}`,
       'Content-Type': 'application/json'
     }
 })
