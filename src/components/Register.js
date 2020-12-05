@@ -18,6 +18,6 @@ export default function Register (props) {
     }
 
     return (
-        <FormAuth title='Регистрация' buttonText='Зарегистрироваться' linkText='Уже зарегистрированы? Войти' setEmail={setEmail} setPassword={setPassword} onSubmit={onSubmit} route='/signin'/>
+        <FormAuth isLoading={props.isLoading} title='Регистрация' buttonText='Зарегистрироваться' linkText='Уже зарегистрированы? Войти' setEmail={setEmail} setPassword={setPassword} onSubmit={onSubmit} route='/signin'/>
     )
 }

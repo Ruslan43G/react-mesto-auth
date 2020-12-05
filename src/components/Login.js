@@ -17,6 +17,6 @@ export default function Login (props) {
     }
 
     return (
-        <FormAuth title='Вход' buttonText='Войти' linkText='Ещё не зарегистрированы? Регистрация' setEmail={setEmail} setPassword={setPassword} onSubmit={onSubmit} route='./signup'/>
+        <FormAuth isLoading={props.isLoading} title='Вход' buttonText='Войти' linkText='Ещё не зарегистрированы? Регистрация' setEmail={setEmail} setPassword={setPassword} onSubmit={onSubmit} route='./signup'/>
     )
 }

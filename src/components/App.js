@@ -5,7 +5,6 @@ import Main from './Main.js';
 import Footer from './Footer.js';
 import api from '../utils/Api.js';
 import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
-import PopupWithForm from './PopupWithForm.js';
 import EditProfilePopup from './EditProfilePopup.js';
 import ImagePopup from './ImagePopup.js';
 import EditAvatarPopup from './EditAvatarPopup.js';
@@ -45,23 +44,24 @@ function App() {
 
   // Запрос данных о юзере и карточках при монтировании, выполняется 1 раз
   React.useEffect(() => {
+    const token = localStorage.getItem('jwt');
+    api.setHeaders(token);
 
     Promise.all([api.getUserInfo(), api.getInitialCards()])
-      .then(([userInfo, initialCards, token]) => {
-        setCurrentUser({name: userInfo.name, about: userInfo.about, avatar: userInfo.avatar, _id: userInfo._id});
+      .then(([userInfo, initialCards]) => {
+        setCurrentUser({name: userInfo.user.name || 'Жак-Ив Кусто', about: userInfo.user.about || 'Исследователь океана', avatar: userInfo.user.avatar, _id: userInfo.user._id});
         setCards([...initialCards]);
-
       })
       .catch(err => console.log(err));
 
-  }, []);
+  }, [loggedIn]);
 
   // Проверка токена и его валидности
   React.useEffect(() => {
     auth.checkToken()
       .then((res) => {
-        res.data ? setLoggedIn(true) : setLoggedIn(false);
-        setEmail(res.data.email);
+        res.user ? setLoggedIn(true) : setLoggedIn(false);
+        setEmail(res.user.email);
         history.push('/');
       })
       .catch(err => console.log(err));
@@ -113,7 +113,8 @@ function App() {
         setCurrentUser({...currentUser, name: res.name, about: res.about});
         closeAllPopups();
       })
-      .catch(err => console.log(err));
+      .catch(err => console.log(err))
+      .finally(() => setIsLoading(false))
   }
   // Обновить аватар юзера
   function handleUpdateAvatar(data) {
@@ -123,11 +124,12 @@ function App() {
         setCurrentUser({...currentUser, avatar: res.avatar});
         closeAllPopups();
       })
-      .catch(err => console.log(err));
+      .catch(err => console.log(err))
+      .finally(() => setIsLoading(false))
   }
   //функция снять поставить лайк
   function handleCardLike(card) {
-    const isLiked = card.likes.some(item => item._id === currentUser._id);
+    const isLiked = card.likes.some(item => item === currentUser._id);
     api.handleLike(card._id, isLiked)
         .then((newCard) => {
             const newCards = cards.map(item => item._id === card._id ? newCard : item);
@@ -161,10 +163,12 @@ function App() {
         closeAllPopups();
       })
       .catch(err => console.log(err))
+      .finally(() => setIsLoading(false))
   }
 
   //обработчик сабмита входа пользователя
   function handleLogin (data) {
+    setIsLoading(true);
     auth.login({
         password: data.password,
         email: data.email
@@ -175,6 +179,7 @@ function App() {
         history.push('/')
     })
     .catch((err) => console.log(err))
+    .finally(() => setIsLoading(false))
 }
   // обработчика сабмита выхода пользователя
   function handleLogout () {
@@ -185,6 +190,7 @@ function App() {
 
   // обработчик сабмита регистрации
   function handleRegister (data) {
+    setIsLoading(true);
     auth.register({
       password: data.password,
       email: data.email
@@ -206,6 +212,7 @@ function App() {
             success: false
         });
     })
+    .finally(() => setIsLoading(false))
 }
 
   // рендер основной страницы
@@ -226,10 +233,10 @@ function App() {
             onCardClick={handleCardClick}
           />
           <Route path='/signin'>
-            <Login onSubmit={handleLogin} setLink={setHeaderLink}/>
+            <Login isLoading={isLoading} onSubmit={handleLogin} setLink={setHeaderLink}/>
           </Route>
           <Route path='/signup'>
-            <Register onSubmit={handleRegister} setLink={setHeaderLink}/>
+            <Register isLoading={isLoading} onSubmit={handleRegister} setLink={setHeaderLink}/>
           </Route>
           <Route>
             <Redirect to={`/${loggedIn ? '' : 'signin'}`} />

@@ -22,13 +22,23 @@ export default function AddPlacePopup (props) {
         if (!evt.target.validity.valid) {
             setInputUrlError(true);
             setSpanUrlText(evt.target.validationMessage);
-            setButtonState(false);
+            checkButtonState(evt);
         } else {
             setInputUrlError(false);
             setSpanUrlText('');
-            setButtonState(true);
+            checkButtonState(evt);
         }
     }
+
+    function checkButtonState (evt) {
+        if (!evt.target.closest('form').checkValidity()) {
+            setButtonState(true);
+            return;
+        } else {
+            setButtonState(false);
+        }
+    }
+
 
     function handleOnSubmit(evt) {
         evt.preventDefault();
@@ -40,7 +50,7 @@ export default function AddPlacePopup (props) {
     const [spanNameText, setSpanNameText] = React.useState('');
     const [inputUrlError, setInputUrlError] = React.useState(false);
     const [spanUrlText, setSpanUrlText] = React.useState(''); 
-    const [buttonState, setButtonState] = React.useState(false); 
+    const [buttonState, setButtonState] = React.useState(true); 
 
     function close () {
         props.onClose();

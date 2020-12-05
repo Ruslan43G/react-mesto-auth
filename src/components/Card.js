@@ -5,10 +5,10 @@ export default function Card (props) {                                          
     //подписываемся на контекс юзера
     const user = React.useContext(CurrentUserContext);
     //определяем отображение иконки удаления
-    const isOwn = props.card.owner._id === user._id;
+    const isOwn = props.card.owner === user._id;
     const trashButtonClassName = `${isOwn ? 'elements__trash' : 'elements__trash elements__trash_hidden' }`;
     //определяем отображение лайка
-    const isLiked = props.card.likes.some(item => item._id === user._id);
+    const isLiked = props.card.likes.some(item => item === user._id);
     const likeButtonClassName = `${isLiked ? 'elements__like elements__like_active' : 'elements__like'}`;
     //хэндлер клика по картинке для открытия попапа
     function handleClick() {
@@ -20,6 +20,7 @@ export default function Card (props) {                                          
     function handleTrashClick() {
         props.onTrashClick(props.card);
     }
+
     // отрисовка компонента
     return (
         <div className="elements__item" data-owner="">

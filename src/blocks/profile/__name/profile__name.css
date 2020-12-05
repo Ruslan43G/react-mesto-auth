@@ -1,4 +1,5 @@
 .profile__name {
+    min-width: 290px;
     max-width: 295px;
     font-style: normal;
     font-weight: 500;
@@ -11,6 +12,7 @@
 
 @media screen and (max-width: 900px) {
     .profile__name {
+        min-width: 240px;
         font-size: 27px;
         -ms-flex-item-align: center;
         -ms-grid-row-align: center;

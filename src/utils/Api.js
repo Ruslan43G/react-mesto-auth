@@ -5,6 +5,13 @@ class Api {
         this._headers = options.headers;
     }
 
+    setHeaders (token) {
+        this._headers = {
+            ...this._headers,
+            authorization: `Bearer ${token}`,
+        }
+    }
+
     postNewCard (formData) {
         return fetch (`${this._url}/cards`, {
             method: 'POST',
@@ -25,7 +32,7 @@ class Api {
 
     getInitialCards() {
         return fetch(`${this._url}/cards`, {
-            headers: this._headers
+            headers: this._headers,
         })
         .then((res) => {
             if (res.ok) {
@@ -37,7 +44,8 @@ class Api {
 
     getUserInfo() {
         return fetch(`${this._url}/users/me`, {
-            headers: this._headers
+            method: 'GET',
+            headers: this._headers,
             })
             .then((res) => {
                 if (res.ok) {
@@ -45,7 +53,7 @@ class Api {
                 }
                 return Promise.reject(`Ошибка: ${res.status} ${res.statusText}`);
             });
-
+        
     }
 
     setUserInfo(newUserData) {
@@ -85,7 +93,7 @@ class Api {
 
     handleLike(cardId, boolean) {
         if (boolean) {
-            return fetch(`${this._url}/cards/likes/${cardId}`, {
+            return fetch(`${this._url}/cards/${cardId}/likes`, {
                 method: 'DELETE',
                 headers: this._headers
                 })
@@ -96,7 +104,7 @@ class Api {
                     return Promise.reject(`Ошибка: ${res.status} ${res.statusText}`);
                 });
         } else {
-            return fetch(`${this._url}/cards/likes/${cardId}`, {
+            return fetch(`${this._url}/cards/${cardId}/likes`, {
                 method: 'PUT',
                 headers: this._headers
                 })
@@ -126,12 +134,9 @@ class Api {
 
 }
 
-const jwt = localStorage.getItem('jwt');
-
 const api = new Api({
-    baseUrl: 'https://api.ruslan43g.students.nomoreparties.xyz',
+    baseUrl: 'https://api.ruslan.mesto.students.nomoreparties.xyz',
     headers: {
-      authorization: `Bearer ${jwt}`,
       'Content-Type': 'application/json'
     }
 })

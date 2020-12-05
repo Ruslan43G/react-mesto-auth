@@ -12,17 +12,26 @@ export default function EditAvatarPopup (props) {
     //  стейт переменные для валидации
     const [inputError, setInputError] = React.useState(false);
     const [spanText, setSpanText] = React.useState('');
-    const [buttonState, setButtonState] = React.useState(false); 
+    const [buttonState, setButtonState] = React.useState(true); 
 
     function onChangeValidation (evt) {
         if (!evt.target.validity.valid) {
             setInputError(true);
             setSpanText(evt.target.validationMessage);
-            setButtonState(false);
+            checkButtonState(evt);
         } else {
             setInputError(false);
             setSpanText('');
+            checkButtonState(evt);
+        }
+    }
+
+    function checkButtonState (evt) {
+        if (!evt.target.closest('form').checkValidity()) {
             setButtonState(true);
+            return;
+        } else {
+            setButtonState(false);
         }
     }
 

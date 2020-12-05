@@ -1,6 +1,7 @@
 import React from 'react';
 import Card from './Card.js';
 import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
+import avatar from '../images/profile/image.jpg'
 //основной компонент. Содержит секцию с профилем и карточками.
 export default function Main (props) {
     //подписка на контекст юзера
@@ -10,7 +11,7 @@ export default function Main (props) {
     return (
         <> 
             <section className="profile">
-                <img className="profile__img" src={user.avatar} alt="автар пользователя"/>
+                <img className="profile__img" src={user.avatar || avatar} alt="автар пользователя"/>
                 <div className="profile__img-hover" onClick={props.onEditAvatar}></div>
                 <div className="profile__info">
                     <h1 className="profile__name">{user.name}</h1>

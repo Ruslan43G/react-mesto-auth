@@ -4,8 +4,9 @@ import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
 
 export default function EitProfilePopup (props) {
     const user = React.useContext(CurrentUserContext);
-    const [name, setName] = React.useState('');
-    const [description, setDescription] = React.useState('');
+    
+    const [name, setName] = React.useState(user.name);
+    const [description, setDescription] = React.useState(user.about);
 
     React.useEffect(() => {
         setName(user.name);
@@ -14,14 +15,14 @@ export default function EitProfilePopup (props) {
 
     function handleNameInput(evt) {
         setName(evt.target.value);
-        if (!evt.target.validity.valid) {
+        if (!evt.target.checkValidity()) {
             setInputNameError(true);
             setSpanNameText(evt.target.validationMessage);
-            checkButtonState();
+            checkButtonState(evt);
         } else {
             setInputNameError(false);
             setSpanNameText('');
-            checkButtonState();
+            checkButtonState(evt);
         }
     }
 
@@ -30,11 +31,11 @@ export default function EitProfilePopup (props) {
         if (!evt.target.validity.valid) {
             setInputAboutError(true);
             setSpanboutText(evt.target.validationMessage);
-            checkButtonState();
+            checkButtonState(evt);
         } else {
             setInputAboutError(false);
             setSpanboutText('');
-            checkButtonState();
+            checkButtonState(evt);
         }
     }
 
@@ -53,13 +54,12 @@ export default function EitProfilePopup (props) {
     const [spanAboutText, setSpanboutText] = React.useState('');
     const [buttonState, setButtonState] = React.useState(true); 
 
-    const errorsArray = [inputNameError, inputAboutError];
-    function checkButtonState () {
-        if (errorsArray.some(item => item === true)) {
-            setButtonState(false);
+    function checkButtonState (evt) {
+        if (!evt.target.closest('form').checkValidity()) {
+            setButtonState(true);
             return;
         } else {
-            setButtonState(true);
+            setButtonState(false);
         }
     }
 
@@ -70,6 +70,8 @@ export default function EitProfilePopup (props) {
         setInputNameError(false);
         setSpanNameText('');
         setButtonState(true);
+        setName(user.name);
+        setDescription(user.about);
     }
 
     return (

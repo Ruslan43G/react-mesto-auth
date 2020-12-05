@@ -9,6 +9,6 @@ export default function ConfirmDeletePopup (props) {
     }
 
     return (
-        <PopupWithForm name='popup_delete' buttonState={true} buttonText='Да' title='Вы уверены?' isOpen={props.isOpen} onClose={props.onClose} isLoading={props.isLoading} onSubmit={submitHandler}/>
+        <PopupWithForm name='popup_delete' buttonState={false} buttonText='Да' title='Вы уверены?' isOpen={props.isOpen} onClose={props.onClose} isLoading={props.isLoading} onSubmit={submitHandler}/>
     )
 }

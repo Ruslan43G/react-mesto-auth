@@ -22,7 +22,7 @@ export default function FormAuth (props)  {
                 <input onChange={handleEmailInput} type='email' className='form__input' placeholder='Email' required></input>
                 <input onChange={handlePasswordInput} type='password'className='form__input' placeholder='Пароль' required></input>
             </div>
-            <button className='form__submit' type='submit'>{props.buttonText}</button>
+            <button className='form__submit' type='submit'>{props.isLoading ? `Загрузка...` : props.buttonText}</button>
             <Link className='form__link' to={props.route}>
                 {props.linkText}
             </Link>
