@@ -7,6 +7,12 @@ export default function EitProfilePopup (props) {
     
     const [name, setName] = React.useState(user.name);
     const [description, setDescription] = React.useState(user.about);
+     //  стейт переменные для валидации
+     const [inputNameError, setInputNameError] = React.useState(false);
+     const [spanNameText, setSpanNameText] = React.useState('');
+     const [inputAboutError, setInputAboutError] = React.useState(false);
+     const [spanAboutText, setSpanboutText] = React.useState('');
+     const [buttonState, setButtonState] = React.useState(true); 
 
     React.useEffect(() => {
         setName(user.name);
@@ -46,13 +52,6 @@ export default function EitProfilePopup (props) {
             about: description
         })
     }
-
-    //  стейт переменные для валидации
-    const [inputNameError, setInputNameError] = React.useState(false);
-    const [spanNameText, setSpanNameText] = React.useState('');
-    const [inputAboutError, setInputAboutError] = React.useState(false);
-    const [spanAboutText, setSpanboutText] = React.useState('');
-    const [buttonState, setButtonState] = React.useState(true); 
 
     function checkButtonState (evt) {
         if (!evt.target.closest('form').checkValidity()) {

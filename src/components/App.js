@@ -196,7 +196,6 @@ function App() {
       email: data.email
     })
     .then((res) => {
-        console.log(res);
         setTooltip({
             isOpen: true,
             title: 'Вы успешно зарегистрировались!',

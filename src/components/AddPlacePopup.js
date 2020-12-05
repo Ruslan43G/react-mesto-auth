@@ -3,17 +3,22 @@ import PopupWithForm from './PopupWithForm';
 
 export default function AddPlacePopup (props) {
     const [newCard, setNewCard] = React.useState({name: '', link: ''});
+    const [inputNameError, setInputNameError] = React.useState(false);
+    const [spanNameText, setSpanNameText] = React.useState('');
+    const [inputUrlError, setInputUrlError] = React.useState(false);
+    const [spanUrlText, setSpanUrlText] = React.useState(''); 
+    const [buttonState, setButtonState] = React.useState(true); 
 
     function handleNameinput(evt) {
         setNewCard({...newCard, name: evt.target.value});
         if (!evt.target.validity.valid) {
             setInputNameError(true);
             setSpanNameText(evt.target.validationMessage);
-            setButtonState(false);
+            checkButtonState(evt);
         } else {
             setInputNameError(false);
             setSpanNameText('');
-            setButtonState(true);
+            checkButtonState(evt);
         }
     }
 
@@ -43,14 +48,7 @@ export default function AddPlacePopup (props) {
     function handleOnSubmit(evt) {
         evt.preventDefault();
         props.onSubmit(newCard);
-        setNewCard({name: '', link: ''});
     }
-
-    const [inputNameError, setInputNameError] = React.useState(false);
-    const [spanNameText, setSpanNameText] = React.useState('');
-    const [inputUrlError, setInputUrlError] = React.useState(false);
-    const [spanUrlText, setSpanUrlText] = React.useState(''); 
-    const [buttonState, setButtonState] = React.useState(true); 
 
     function close () {
         props.onClose();
